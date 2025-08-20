@@ -25,9 +25,7 @@ export default function DemoPage() {
 
   return (
     <main className="mx-auto max-w-none px-3 md:px-4">
-
       <FlipBook ref={ref} images={pages} onPage={setCurrent} rtl={rtl} />
-      <p className="mt-3 text-center text-xs text-gray-500">当前页：{current + 1} / {pages.length}</p>
     </main>
   );
 }
