@@ -16,12 +16,6 @@ export default function DemoPage() {
     return { src: `/books/future/${num}.png`, alt: `第 ${i + 1} 页` };
   });
 
-  /*
-    const pages = range(12).map((i) => {
-    const num = String(i + 1).padStart(3, "0");
-    return { src: `/books/book-01/${num}.jpg`, alt: `第 ${i + 1} 页` };
-  });
-  */
 
   return (
     <main className="mx-auto max-w-none px-3 md:px-4">
