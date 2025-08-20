@@ -4,3 +4,43 @@
 
 html, body, #__next { height: 100%; }
 body { @apply bg-white text-gray-900; }
+
+/* 让 FlipBook 外层容器保持：高优先，宽度按 A4 竖版比例推算（≈ 0.707） */
+.book-portrait {
+  /* 手机/小屏：铺满可视高度（svh 更贴近移动端真实高度） */
+  height: 100svh;
+  width: min(calc(100svh * 0.707), 900px); /* 上限 900px，可按需要调整 */
+  margin-inline: auto; /* 水平居中 */
+}
+
+/* 中等屏以上，略微留点边距更沉浸 */
+@media (min-width: 768px) {
+  .book-portrait {
+    height: 88vh;
+    width: min(calc(88vh * 0.707), 1000px);
+  }
+}
+
+/* 超大屏：更大一些 */
+@media (min-width: 1280px) {
+  .book-portrait {
+    height: 92vh;
+    width: min(calc(92vh * 0.707), 1100px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-5deg); }
+}
+.animate-wiggle {
+  animation: wiggle 1s infinite ease-in-out;
+}
+
+
+@keyframes spineBreath {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
+}
+.spine-breath { animation: spineBreath 2.4s ease-in-out infinite; }
+

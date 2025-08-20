@@ -13,6 +13,7 @@ export type FlipBookProps = {
   showToolbar?: boolean;
   onPage?: (index: number) => void;
   rtl?: boolean;
+  fillMode?: "cover" | "contain"; // 👈 新增（可选）
 };
 
 export function computeDims({ viewportWidth, designWidth, designHeight }: { viewportWidth: number; designWidth: number; designHeight: number }) {
@@ -30,6 +31,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   showToolbar = true,
   onPage,
   rtl = false,
+  fillMode = "contain", // 👈 默认少留白且不裁切
 }, ref) {
   const bookRef = useRef<any>(null);
   const [page, setPage] = useState(0);
@@ -92,7 +94,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   return (
   // 关键：视口高度自适应 —— 手机铺满，高分辨率设备预留一点空间
   <div className={`w-full flex flex-col items-center ${className || ""}`}>
-    {showToolbar && (
+    {/*showToolbar && (
       <div className="mb-3 flex items-center gap-2 rounded-xl border px-3 py-2 shadow-sm">
         <button onClick={rtl ? goNext : goPrev} className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50">上一页</button>
         <div className="text-sm tabular-nums">第 {page + 1} / {total}</div>
@@ -100,62 +102,116 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
         <div className="mx-2 h-4 w-px bg-gray-200" />
         <button onClick={toggleFullscreen} className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50">全屏</button>
       </div>
-    )}
+    )*/}
 
     {/* 这里是自适应关键容器：
         - h-[100svh]：在移动端占满整屏（考虑移动端地址栏收缩，用 svh 更准确）
         - md:h-[85vh]：iPad/横屏平板留 15% 余量（工具栏、系统条）
         - xl:h-[90vh]：桌面大屏更沉浸
     */}
-    <div className="w-full max-w-[1200px] h-[100svh] md:h-[85vh] xl:h-[90vh]">
-      <HTMLFlipBook
-        /* 基准单页尺寸：更接近 A4 竖版比例（宽:高 ≈ 1:1.414）*/
-        width={700}
-        height={990}
+  <div
+  style={{
+    height: '92vh',
+    width: 'min(calc(92vh * 0.707), 1100px)',
+    marginInline: 'auto',
+  }}
+>
+  <HTMLFlipBook
+    // —— 基准单页尺寸（A4 竖版）
+    width={700}
+    height={990}
 
-        /* 让书本随容器拉伸 */
-        size="stretch"
-        style={{ width: "100%", height: "100%" }}
+    // —— 固定尺寸模式，更利于锁定单页
+    size="fixed"
 
-        /* 类型友好默认值（避免 TS 必填报错） */
-        minWidth={280}
-        maxWidth={1800}
-        minHeight={300}
-        maxHeight={2200}
-        startPage={0}
-        drawShadow={true}
-        flippingTime={600}
-        startZIndex={0}
-        swipeDistance={30}
-        clickEventForward={true}
-        useMouseEvents={true}
-        showPageCorners={true}
-        disableFlipByClick={false}
+    // —— 单页模式开关 + 调试输出
+    usePortrait={true}
+    onChangeOrientation={(mode) => console.log('FlipBook orientation:', mode)}
 
-        /* 原有交互 */
-        showCover={false}
-        mobileScrollSupport={true}
-        usePortrait={true}
-        maxShadowOpacity={0.3}
-        autoSize={true}
+    // —— 其余必需/常用参数
+    minWidth={280}
+    maxWidth={1800}
+    minHeight={300}
+    maxHeight={2200}
+    drawShadow={true}
+    flippingTime={600}
+    startZIndex={0}
+    swipeDistance={30}
+    clickEventForward={true}
+    useMouseEvents={true}
+    showPageCorners={true}
+    disableFlipByClick={false}
+    mobileScrollSupport={true}
+    maxShadowOpacity={0.30}
+    autoSize={true}
 
-        ref={bookRef}
-        className="rounded-2xl shadow-xl"
-      >
-        {renderImages.map((img, idx) => (
-          <article key={idx} className="flex h-full w-full items-center justify-center bg-white">
-            <img
-              src={img.src}
-              alt={img.alt || `Page ${idx + 1}`}
-              loading="lazy"
-              className="max-h-full max-w-full object-contain"
-              width={img.width}
-              height={img.height}
-            />
-          </article>
-        ))}
-      </HTMLFlipBook>
-    </div>
+    ref={bookRef}
+    className="rounded-2xl shadow-xl"
+  >
+    {renderImages.map((img, idx) => (
+      <article key={idx} className="h-full w-full bg-white">
+        <img
+          src={img.src}
+          alt={img.alt || `第 ${idx + 1} 页`}
+          className="h-full w-full object-contain bg-white"  // 要更沉浸可改 object-cover
+          width={img.width}
+          height={img.height}
+        />
+      
+      {/* 翻页提示：右侧箭头 */}
+      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+        <div className="text-5xl text-blue-500 drop-shadow-lg animate-bounce">
+          ➤
+        </div>
+      </div>
+
+    {/* ① 书脊阴影（靠内侧的深到浅渐变） */}
+      <div
+        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-6 opacity-70 spine-breath`}
+        style={{
+          background:
+            rtl
+              ? "linear-gradient(to left, rgba(0,0,0,0.22), rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.02) 70%, transparent)"
+              : "linear-gradient(to right, rgba(0,0,0,0.22), rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.02) 70%, transparent)",
+        }}
+      />
+
+      {/* ② 纸张层叠竖纹（很淡的条纹，模拟多页纸的“层次”） */}
+      <div
+        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-6 mix-blend-multiply opacity-15`}
+        style={{
+          background:
+            "repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0px, rgba(0,0,0,0.10) 1px, transparent 1px, transparent 3px)",
+        }}
+      />
+
+      {/* ③ 外沿高光/阴影（靠外侧，让边缘更有“铣边”质感） */}
+      <div
+        className={`pointer-events-none absolute inset-y-0 ${rtl ? "left-0" : "right-0"} w-3`}
+        style={{
+          background: rtl
+            ? "linear-gradient(to right, rgba(0,0,0,0.06), transparent)"
+            : "linear-gradient(to left, rgba(0,0,0,0.06), transparent)",
+        }}
+      />
+
+      {/* （可选）右下角微弱“卷角”内阴影，增强纸感 */}
+      <div
+        className={`pointer-events-none absolute bottom-0 ${rtl ? "left-0" : "right-0"} w-10 h-10 rounded-br-lg`}
+        style={{
+          boxShadow: rtl ? "inset 6px -6px 12px rgba(0,0,0,0.12)" : "inset -6px -6px 12px rgba(0,0,0,0.12)",
+          borderBottomLeftRadius: rtl ? "0.5rem" : 0,
+          borderBottomRightRadius: rtl ? 0 : "0.5rem",
+          opacity: 0.5,
+        }}
+      />
+
+      </article>
+    ))}
+  </HTMLFlipBook>
+</div>
+
+
   </div>
 );
 
