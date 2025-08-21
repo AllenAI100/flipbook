@@ -209,6 +209,12 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
         }}
       />
 
+      {/* 左侧书脊渐变 */}
+     <div className="absolute left-0 top-0 h-full w-4 bg-gradient-to-r from-gray-400 via-gray-200 to-transparent shadow-inner"></div>
+
+     {/* 折痕阴影（模拟翻页中间的立体感） */}
+     <div className="absolute left-6 top-0 h-full w-2 bg-gradient-to-r from-black/10 via-transparent to-black/5"></div>
+
       </article>
     ))}
   </HTMLFlipBook>
