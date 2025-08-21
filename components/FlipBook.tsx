@@ -117,37 +117,40 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   }}
 >
   <HTMLFlipBook
-    // —— 基准单页尺寸（A4 竖版）
-    width={700}
-    height={990}
+          // —— 基准单页尺寸（A4 竖版）
+          width={700}
+          height={990}
 
-    // —— 固定尺寸模式，更利于锁定单页
-    size="fixed"
+          // —— 固定尺寸模式，更利于锁定单页
+          size="fixed"
 
-    // —— 单页模式开关 + 调试输出
-    usePortrait={true}
-    onChangeOrientation={(mode) => console.log('FlipBook orientation:', mode)}
+          // —— 单页模式开关 + 调试输出
+          usePortrait={true}
+          onChangeOrientation={(mode) => console.log('FlipBook orientation:', mode)}
 
-    // —— 其余必需/常用参数
-    minWidth={280}
-    maxWidth={1800}
-    minHeight={300}
-    maxHeight={2200}
-    drawShadow={true}
-    flippingTime={600}
-    startZIndex={0}
-    swipeDistance={30}
-    clickEventForward={true}
-    useMouseEvents={true}
-    showPageCorners={true}
-    disableFlipByClick={false}
-    mobileScrollSupport={true}
-    maxShadowOpacity={0.30}
-    autoSize={true}
+          // —— 其余必需/常用参数
+          minWidth={280}
+          maxWidth={1800}
+          minHeight={300}
+          maxHeight={2200}
+          drawShadow={true}
+          flippingTime={600}
+          startZIndex={0}
+          swipeDistance={30}
+          clickEventForward={true}
+          useMouseEvents={true}
+          showPageCorners={true}
+          disableFlipByClick={false}
+          mobileScrollSupport={true}
+          maxShadowOpacity={0.30}
+          autoSize={true}
 
-    ref={bookRef}
-    className="rounded-2xl shadow-xl"
-  >
+          ref={bookRef}
+          className="rounded-2xl shadow-xl"
+          startPage={0}
+          showCover={false}
+          style={undefined}
+>
     {renderImages.map((img, idx) => (
       <article key={idx} className="h-full w-full bg-white">
         <img
