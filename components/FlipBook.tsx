@@ -35,6 +35,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
 }, ref) {
   const bookRef = useRef<any>(null);
   const [page, setPage] = useState(0);
+  const [showHints, setShowHints] = useState(true);
   const total = images.length;
 
   const renderImages = useMemo(() => (rtl ? [...images].reverse() : images), [images, rtl]);
@@ -44,12 +45,21 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
     if (!api) return;
     const onFlip = (e: any) => {
       setPage(e.data);
+      setShowHints(false); // 用户翻页后隐藏提示
       const logicalIndex = rtl ? total - 1 - e.data : e.data;
       onPage?.(logicalIndex);
     };
     api.on("flip", onFlip);
     return () => api.off("flip", onFlip);
   }, [onPage, rtl, total]);
+
+  // 自动隐藏提示
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowHints(false);
+    }, 5000); // 5秒后自动隐藏
+    return () => clearTimeout(timer);
+  }, []);
 
   const dims = useMemo(() => {
     if (typeof window === "undefined") return { w: width, h: height };
@@ -89,7 +99,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [rtl]);
+  }, [rtl, goNext, goPrev, toggleFullscreen]);
 
   return (
   // 关键：视口高度自适应 —— 手机铺满，高分辨率设备预留一点空间
@@ -153,35 +163,74 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
 >
     {renderImages.map((img, idx) => (
       <article key={idx} className="h-full w-full bg-white">
-        <img
-          src={img.src}
-          alt={img.alt || `第 ${idx + 1} 页`}
-          className="h-full w-full object-contain bg-white"  // 要更沉浸可改 object-cover
-          width={img.width}
-          height={img.height}
-        />
-      
-      {/* 翻页提示：右侧箭头 */}
-      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-        <div className="text-5xl text-blue-500 drop-shadow-lg animate-bounce">
-          ➤
+        <div className="h-full w-full pl-8 pr-4 py-4 bg-white">
+          <img
+            src={img.src}
+            alt={img.alt || `第 ${idx + 1} 页`}
+            className="h-full w-full object-contain"
+            width={img.width}
+            height={img.height}
+          />
         </div>
-      </div>
+      
+      {/* 左右翻页提示箭头 */}
+      {showHints && (
+        <div className="absolute inset-0 pointer-events-none">
+          {/* 左侧箭头 - 上一页提示 */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-500">
+            <div className="bg-blue-500/90 backdrop-blur-sm rounded-full p-3 shadow-2xl animate-pulse border-2 border-white/30">
+              <div className="text-3xl text-white font-bold">
+                ◀
+              </div>
+            </div>
+            <div className="text-xs text-white bg-black/70 px-2 py-1 rounded-full mt-2 text-center font-medium backdrop-blur-sm">
+              上一页
+            </div>
+          </div>
+          
+          {/* 右侧箭头 - 下一页提示 */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-500">
+            <div className="bg-blue-500/90 backdrop-blur-sm rounded-full p-3 shadow-2xl animate-pulse border-2 border-white/30">
+              <div className="text-3xl text-white font-bold">
+                ▶
+              </div>
+            </div>
+            <div className="text-xs text-white bg-black/70 px-2 py-1 rounded-full mt-2 text-center font-medium backdrop-blur-sm">
+              下一页
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 键盘提示 - 首次访问显示 */}
+      {showHints && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
+          <div className="bg-black/80 text-white px-4 py-2 rounded-full text-sm font-medium animate-bounce backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2">
+              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">←</kbd>
+              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">→</kbd>
+              <span>翻页</span>
+              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">F</kbd>
+              <span>全屏</span>
+            </span>
+          </div>
+        </div>
+      )}
 
     {/* ① 书脊阴影（靠内侧的深到浅渐变） */}
       <div
-        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-6 opacity-70 spine-breath`}
+        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-8 opacity-70 spine-breath`}
         style={{
           background:
             rtl
-              ? "linear-gradient(to left, rgba(0,0,0,0.22), rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.02) 70%, transparent)"
-              : "linear-gradient(to right, rgba(0,0,0,0.22), rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.02) 70%, transparent)",
+              ? "linear-gradient(to left, rgba(0,0,0,0.12), rgba(0,0,0,0.04) 35%, rgba(0,0,0,0.01) 70%, transparent)"
+              : "linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.04) 35%, rgba(0,0,0,0.01) 70%, transparent)",
         }}
       />
 
       {/* ② 纸张层叠竖纹（很淡的条纹，模拟多页纸的“层次”） */}
       <div
-        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-6 mix-blend-multiply opacity-15`}
+        className={`pointer-events-none absolute inset-y-0 ${rtl ? "right-0" : "left-0"} w-8 mix-blend-multiply opacity-15`}
         style={{
           background:
             "repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0px, rgba(0,0,0,0.10) 1px, transparent 1px, transparent 3px)",
@@ -210,10 +259,10 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
       />
 
       {/* 左侧书脊渐变 */}
-     <div className="absolute left-0 top-0 h-full w-4 bg-gradient-to-r from-gray-400 via-gray-200 to-transparent shadow-inner"></div>
+     <div className="absolute left-0 top-0 h-full w-6 bg-gradient-to-r from-gray-300 via-gray-100 to-transparent shadow-inner"></div>
 
      {/* 折痕阴影（模拟翻页中间的立体感） */}
-     <div className="absolute left-6 top-0 h-full w-2 bg-gradient-to-r from-black/10 via-transparent to-black/5"></div>
+     <div className="absolute left-6 top-0 h-full w-2 bg-gradient-to-r from-black/6 via-transparent to-black/2"></div>
 
       </article>
     ))}
