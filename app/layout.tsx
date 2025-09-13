@@ -1,4 +1,16 @@
-export const metadata = { title: "FlipBook Demo", description: "Next.js + react-pageflip" };
+export const metadata = { 
+  title: "FlipBook Demo", 
+  description: "Next.js + react-pageflip" 
+};
+
+// 移动端 viewport 配置
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover'
+};
 import "./globals.css";
 import Script from "next/script";
 

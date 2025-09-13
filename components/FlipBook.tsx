@@ -36,7 +36,18 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   const bookRef = useRef<any>(null);
   const [page, setPage] = useState(0);
   const [showHints, setShowHints] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const total = images.length;
+
+  // 检测移动端设备
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const renderImages = useMemo(() => (rtl ? [...images].reverse() : images), [images, rtl]);
 
@@ -146,10 +157,10 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
           drawShadow={true}
           flippingTime={600}
           startZIndex={0}
-          swipeDistance={30}
+          swipeDistance={isMobile ? 50 : 30}
           clickEventForward={true}
-          useMouseEvents={true}
-          showPageCorners={true}
+          useMouseEvents={!isMobile}
+          showPageCorners={!isMobile}
           disableFlipByClick={false}
           mobileScrollSupport={true}
           maxShadowOpacity={0.30}
@@ -202,17 +213,25 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
         </div>
       )}
 
-      {/* 键盘提示 - 首次访问显示 */}
+      {/* 操作提示 - 移动端显示触摸提示，桌面端显示键盘提示 */}
       {showHints && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
           <div className="bg-black/80 text-white px-4 py-2 rounded-full text-sm font-medium animate-bounce backdrop-blur-sm">
-            <span className="inline-flex items-center gap-2">
-              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">←</kbd>
-              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">→</kbd>
-              <span>翻页</span>
-              <kbd className="px-2 py-1 bg-white/20 rounded text-xs">F</kbd>
-              <span>全屏</span>
-            </span>
+            {isMobile ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="text-lg">👆</span>
+                <span>点击或滑动翻页</span>
+                <span className="text-lg">📱</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2">
+                <kbd className="px-2 py-1 bg-white/20 rounded text-xs">←</kbd>
+                <kbd className="px-2 py-1 bg-white/20 rounded text-xs">→</kbd>
+                <span>翻页</span>
+                <kbd className="px-2 py-1 bg-white/20 rounded text-xs">F</kbd>
+                <span>全屏</span>
+              </span>
+            )}
           </div>
         </div>
       )}
