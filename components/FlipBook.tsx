@@ -41,15 +41,58 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   const renderImages = useMemo(() => (rtl ? [...images].reverse() : images), [images, rtl]);
 
   useEffect(() => {
-    const api = bookRef.current?.pageFlip?.();
-    if (!api) return;
-    const onFlip = (e: any) => {
-      setPage(e.data);
-      const logicalIndex = rtl ? total - 1 - e.data : e.data;
-      onPage?.(logicalIndex);
+    // 延迟执行，确保 HTMLFlipBook 已经完全初始化
+    const timer = setTimeout(() => {
+      const api = bookRef.current?.pageFlip?.();
+      if (!api) {
+        // alert('API 未找到');
+        return;
+      }
+      
+      // 设置初始页面状态
+      const currentPage = api.getCurrentPageIndex();
+      // alert(`初始化: page=${currentPage}, rtl=${rtl}, total=${total}`);
+      setPage(currentPage);
+      
+      const onFlip = (e: any) => {
+        // alert(`翻页事件: renderIndex=${e.data || e}`);
+        setPage(e.data || e);
+        const logicalIndex = rtl ? total - 1 - (e.data || e) : (e.data || e);
+        onPage?.(logicalIndex);
+      };
+      
+      // 尝试多个可能的事件名称
+      api.on("flip", onFlip);
+      api.on("changePage", onFlip);
+      api.on("pageChanged", onFlip);
+      api.on("flipEnd", onFlip);
+      
+      // 添加定期检查页面状态的机制，确保手动翻页时状态同步
+      const checkPageInterval = setInterval(() => {
+        const currentPage = api.getCurrentPageIndex();
+        if (currentPage !== page) {
+          setPage(currentPage);
+        }
+      }, 100); // 每100ms检查一次
+      
+      // 返回清理函数
+      return () => {
+        api.off("flip", onFlip);
+        api.off("changePage", onFlip);
+        api.off("pageChanged", onFlip);
+        api.off("flipEnd", onFlip);
+        clearInterval(checkPageInterval);
+      };
+    }, 100);
+    
+    return () => {
+      clearTimeout(timer);
+      // 确保在组件卸载时清理事件监听器
+      const api = bookRef.current?.pageFlip?.();
+      if (api) {
+        api.off("flip");
+      }
     };
-    api.on("flip", onFlip);
-    return () => api.off("flip", onFlip);
   }, [onPage, rtl, total]);
 
   const dims = useMemo(() => {
@@ -59,11 +102,27 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
   }, [width, height]);
 
   const goPrev = () => {
-    bookRef.current?.pageFlip?.().flipPrev();
+    const api = bookRef.current?.pageFlip?.();
+    if (api) {
+      api.flipPrev();
+      // 手动检查页面状态并强制更新（减少延迟时间）
+      setTimeout(() => {
+        const newPage = api.getCurrentPageIndex();
+        setPage(newPage);
+      }, 50);
+    }
     setShowHints(false); // 隐藏提示
   };
   const goNext = () => {
-    bookRef.current?.pageFlip?.().flipNext();
+    const api = bookRef.current?.pageFlip?.();
+    if (api) {
+      api.flipNext();
+      // 手动检查页面状态并强制更新（减少延迟时间）
+      setTimeout(() => {
+        const newPage = api.getCurrentPageIndex();
+        setPage(newPage);
+      }, 50);
+    }
     setShowHints(false); // 隐藏提示
   };
   const goToRenderIndex = (i: number) => bookRef.current?.pageFlip?.().flip(i);
@@ -186,30 +245,30 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
                 }}
               />
 
-              {/* 左侧书脊渐变 */}
-              <div className="absolute left-0 top-0 h-full w-4 bg-gradient-to-r from-gray-400 via-gray-200 to-transparent shadow-inner"></div>
+              {/* 左侧书脊渐变 - 更淡的颜色 */}
+              <div className="absolute left-0 top-0 h-full w-4 bg-gradient-to-r from-gray-200 via-gray-100 to-transparent shadow-inner opacity-60"></div>
 
               {/* 折痕阴影（模拟翻页中间的立体感） */}
-              <div className="absolute left-6 top-0 h-full w-2 bg-gradient-to-r from-black/10 via-transparent to-black/5"></div>
+              <div className="absolute left-6 top-0 h-full w-2 bg-gradient-to-r from-black/5 via-transparent to-black/3"></div>
             </article>
           ))}
         </HTMLFlipBook>
 
-        {/* 悬浮翻页按钮 */}
+        {/* 悬浮翻页按钮 - 更显眼的设计 */}
         <button
           onClick={goPrev}
-          disabled={page === 0}
-          className="absolute top-1/2 -translate-y-1/2 left-4 w-12 h-12 bg-black/20 hover:bg-black/40 active:bg-black/60 rounded-full flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+          disabled={rtl ? page === total - 1 : page === 0}
+          className="absolute top-1/2 -translate-y-1/2 left-4 w-14 h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
         >
-          ◀
+          <span className="text-xl font-bold">◀</span>
         </button>
 
         <button
           onClick={goNext}
-          disabled={page === total - 1}
-          className="absolute top-1/2 -translate-y-1/2 right-4 w-12 h-12 bg-black/20 hover:bg-black/40 active:bg-black/60 rounded-full flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all touch-manipulation"
+          disabled={rtl ? page === 0 : page === total - 1}
+          className="absolute top-1/2 -translate-y-1/2 right-4 w-14 h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
         >
-          ▶
+          <span className="text-xl font-bold">▶</span>
         </button>
 
         {/* 页码指示器 */}
@@ -223,6 +282,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
             左右箭头键或滑动翻页
           </div>
         )}
+
       </div>
     </div>
   );
