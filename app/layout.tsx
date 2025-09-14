@@ -3,13 +3,13 @@ export const metadata = {
   description: "Next.js + react-pageflip" 
 };
 
-// 移动端 viewport 配置
+// 移动端 viewport 配置 - iPhone 15 等现代手机优化
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: 'cover'
+  viewportFit: 'cover'  // 支持安全区域
 };
 import "./globals.css";
 import Script from "next/script";
