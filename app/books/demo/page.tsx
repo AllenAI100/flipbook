@@ -1,5 +1,6 @@
 "use client";
-import FlipBook from "../../../components/FlipBook";
+import ResponsiveContainer from "../../../components/ResponsiveContainer";
+import ResponsiveFlipBook from "../../../components/ResponsiveFlipBook";
 
 function range(n: number) { return Array.from({ length: n }, (_, i) => i); }
 
@@ -10,15 +11,11 @@ export default function DemoPage() {
   });
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* 移动端优化的容器 */}
-      <div className="w-full h-screen flex items-center justify-center p-2 sm:p-4 lg:p-8">
-        {/* 翻书组件 - 桌面端居中优化 */}
-        <FlipBook 
-          images={pages} 
-          className="desktop-optimized"
-        />
-      </div>
-    </main>
+    <ResponsiveContainer>
+      <ResponsiveFlipBook 
+        images={pages}
+        onPage={(index) => console.log('Page changed to:', index)}
+      />
+    </ResponsiveContainer>
   );
 }

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 导入响应式样式 */
+@import '../styles/responsive.css';
+@import '../styles/mobile.css';
+@import '../styles/desktop.css';
+
 html, body, #__next { height: 100%; }
 body { @apply bg-white text-gray-900; }
 
@@ -14,45 +19,13 @@ body { @apply bg-white text-gray-900; }
 }
 
 /* 让 FlipBook 外层容器保持：高优先，宽度按 A4 竖版比例推算（≈ 0.707） */
+/* 注意：移动端使用 mobile-optimized 类，这里只定义桌面端基础样式 */
 .book-portrait {
-  /* 手机/小屏：考虑安全区域，使用动态视口高度 */
-  height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
-  width: min(calc((100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707), calc(100vw - var(--safe-area-inset-left) - var(--safe-area-inset-right) - 32px));
+  /* 桌面端基础样式 */
+  height: 88vh;
+  width: min(calc(88vh * 0.707), 1000px);
   margin-inline: auto; /* 水平居中 */
-  padding-top: var(--safe-area-inset-top);
-  padding-bottom: var(--safe-area-inset-bottom);
-  padding-left: var(--safe-area-inset-left);
-  padding-right: var(--safe-area-inset-right);
-}
-
-/* iPhone 15 系列特定适配 */
-@media (max-width: 430px) {
-  .book-portrait {
-    /* iPhone 15 Plus/Pro Max (430px) */
-    height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
-    width: min(calc((100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707), calc(100vw - 24px));
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-
-@media (max-width: 393px) {
-  .book-portrait {
-    /* iPhone 15/Pro (393px) */
-    height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
-    width: min(calc((100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707), calc(100vw - 20px));
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-}
-
-/* 中等屏以上，略微留点边距更沉浸 */
-@media (min-width: 768px) {
-  .book-portrait {
-    height: 88vh;
-    width: min(calc(88vh * 0.707), 1000px);
-    padding: 0; /* 桌面端不需要安全区域 */
-  }
+  padding: 0;
 }
 
 /* 超大屏：更大一些 */
@@ -60,7 +33,6 @@ body { @apply bg-white text-gray-900; }
   .book-portrait {
     height: 92vh;
     width: min(calc(92vh * 0.707), 1100px);
-    padding: 0; /* 桌面端不需要安全区域 */
   }
 }
 
@@ -79,54 +51,92 @@ body { @apply bg-white text-gray-900; }
 }
 .spine-breath { animation: spineBreath 2.4s ease-in-out infinite; }
 
-/* Demo页面移动端优化样式 */
+/* Demo页面移动端优化样式 - 强制覆盖基础样式 */
 .mobile-optimized .book-portrait {
-  /* 移动端专用样式 - 全屏显示 */
-  height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
-  width: min(calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707, calc(100vw - var(--safe-area-inset-left) - var(--safe-area-inset-right)));
-  max-height: 100dvh;
-  max-width: 100vw;
+  /* 移动端专用样式 - 强制覆盖，确保内容完整显示 */
+  height: calc(100vh - 40px) !important;
+  width: min(calc((100vh - 40px) * 0.707), calc(100vw - 20px)) !important;
+  max-height: calc(100vh - 40px) !important;
+  max-width: calc(100vw - 20px) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+/* iPhone等小屏幕手机优化 */
+@media (max-width: 480px) {
+  .mobile-optimized .book-portrait {
+    /* iPhone全屏优化 - 减少边距确保内容显示 */
+    height: calc(100vh - 20px) !important;
+    width: min(calc((100vh - 20px) * 0.707), calc(100vw - 10px)) !important;
+    max-height: calc(100vh - 20px) !important;
+    max-width: calc(100vw - 10px) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+}
+
+/* iPhone 15等现代手机专用优化 */
+@media (max-width: 430px) {
+  .mobile-optimized .book-portrait {
+    /* iPhone 15系列优化 */
+    height: calc(100vh - 16px) !important;
+    width: min(calc((100vh - 16px) * 0.707), calc(100vw - 8px)) !important;
+    max-height: calc(100vh - 16px) !important;
+    max-width: calc(100vw - 8px) !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* 强制HTMLFlipBook在iPhone上适应屏幕 */
+  .mobile-optimized .book-portrait > div {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 
 /* 移动端和iPad图片优化 */
 @media (max-width: 1024px) {
   .mobile-optimized .book-portrait {
-    /* 移动端全屏优化 */
-    height: calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
-    width: min(calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707, calc(100vw - 16px));
-    margin: 0 auto;
+    /* 强制HTMLFlipBook适应容器 */
+    overflow: hidden !important;
+  }
+  
+  .mobile-optimized .book-portrait > div {
+    /* 强制HTMLFlipBook容器适应父容器 */
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
   }
   
   .mobile-optimized .book-portrait img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    object-position: center !important;
   }
   
   .mobile-optimized .book-portrait article {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
   }
   
   .mobile-optimized .book-portrait .h-full.w-full.bg-white {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* iPhone 15 系列特殊优化 */
-  @media (max-width: 430px) {
-    .mobile-optimized .book-portrait {
-      width: min(calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707, calc(100vw - 12px));
-    }
-  }
-  
-  @media (max-width: 393px) {
-    .mobile-optimized .book-portrait {
-      width: min(calc(100dvh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)) * 0.707, calc(100vw - 8px));
-    }
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
   }
 }
 

@@ -1,0 +1,160 @@
+/* ========================================
+   桌面端专用样式
+   与移动端完全解耦
+   ======================================== */
+
+/* 桌面端容器样式 */
+.desktop-flipbook-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 桌面端翻书容器 */
+.desktop-book-portrait {
+  /* 桌面端专用尺寸计算 */
+  height: 88vh;
+  width: min(calc(88vh * 0.707), 1000px);
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+}
+
+/* 中等屏幕优化 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .desktop-book-portrait {
+    height: 90vh;
+    width: min(calc(90vh * 0.707), 1050px);
+  }
+  
+  .desktop-nav-button-left {
+    left: max(1rem, calc(50% - min(calc(90vh * 0.707), 1050px) / 2 - 4rem));
+  }
+  
+  .desktop-nav-button-right {
+    right: max(1rem, calc(50% - min(calc(90vh * 0.707), 1050px) / 2 - 4rem));
+  }
+}
+
+/* 超大屏优化 */
+@media (min-width: 1280px) {
+  .desktop-book-portrait {
+    height: 92vh;
+    width: min(calc(92vh * 0.707), 1100px);
+  }
+  
+  .desktop-nav-button-left {
+    left: max(1rem, calc(50% - min(calc(92vh * 0.707), 1100px) / 2 - 4rem));
+  }
+  
+  .desktop-nav-button-right {
+    right: max(1rem, calc(50% - min(calc(92vh * 0.707), 1100px) / 2 - 4rem));
+  }
+}
+
+/* 桌面端HTMLFlipBook样式 */
+.desktop-flipbook {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* 桌面端页面样式 */
+.desktop-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.desktop-page-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* 桌面端导航按钮 */
+.desktop-nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.desktop-nav-button:hover {
+  background: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.desktop-nav-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.desktop-nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.desktop-nav-button-left {
+  left: max(1rem, calc(50% - min(calc(88vh * 0.707), 1000px) / 2 - 4rem)); /* 书本宽度的一半减去按钮和间距，最小1rem */
+}
+
+.desktop-nav-button-right {
+  right: max(1rem, calc(50% - min(calc(88vh * 0.707), 1000px) / 2 - 4rem)); /* 书本宽度的一半减去按钮和间距，最小1rem */
+}
+
+/* 桌面端页码指示器 */
+.desktop-page-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+}
+
+/* 桌面端提示 */
+.desktop-hints {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 9999px;
+  animation: bounce 1s infinite;
+  backdrop-filter: blur(4px);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}

@@ -167,7 +167,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
     <div className={`w-full flex flex-col items-center ${className || ""}`}>
       <div className="book-portrait relative">
         <HTMLFlipBook
-          // 单页模式配置
+          // 单页模式配置 - 保持固定尺寸确保单页显示
           width={700}
           height={990}
           size="fixed" // 固定尺寸模式，更利于锁定单页
@@ -254,32 +254,33 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
           ))}
         </HTMLFlipBook>
 
-        {/* 悬浮翻页按钮 - 更显眼的设计 */}
+        {/* 悬浮翻页按钮 - 响应式设计 */}
         <button
           onClick={goPrev}
           disabled={rtl ? page === total - 1 : page === 0}
-          className="absolute top-1/2 -translate-y-1/2 left-4 w-14 h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
+          className="absolute top-1/2 -translate-y-1/2 left-2 sm:left-4 w-10 h-10 sm:w-14 sm:h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
         >
-          <span className="text-xl font-bold">◀</span>
+          <span className="text-lg sm:text-xl font-bold">◀</span>
         </button>
 
         <button
           onClick={goNext}
           disabled={rtl ? page === 0 : page === total - 1}
-          className="absolute top-1/2 -translate-y-1/2 right-4 w-14 h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
+          className="absolute top-1/2 -translate-y-1/2 right-2 sm:right-4 w-10 h-10 sm:w-14 sm:h-14 bg-white/90 hover:bg-white shadow-lg hover:shadow-xl rounded-full flex items-center justify-center text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300 touch-manipulation border-2 border-gray-200 hover:border-gray-300"
         >
-          <span className="text-xl font-bold">▶</span>
+          <span className="text-lg sm:text-xl font-bold">▶</span>
         </button>
 
-        {/* 页码指示器 */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-4 px-3 py-1 text-sm bg-black/70 text-white rounded-full backdrop-blur-sm">
+        {/* 页码指示器 - 响应式设计 */}
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-2 sm:bottom-4 px-2 py-1 sm:px-3 text-xs sm:text-sm bg-black/70 text-white rounded-full backdrop-blur-sm">
           {page + 1} / {total}
         </div>
 
-        {/* 翻页引导提示 */}
+        {/* 翻页引导提示 - 响应式设计 */}
         {showHints && (
-          <div className="absolute left-1/2 -translate-x-1/2 top-4 px-4 py-2 text-sm bg-black/80 text-white rounded-full animate-bounce backdrop-blur-sm">
-            左右箭头键或滑动翻页
+          <div className="absolute left-1/2 -translate-x-1/2 top-2 sm:top-4 px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm bg-black/80 text-white rounded-full animate-bounce backdrop-blur-sm">
+            <span className="hidden sm:inline">左右箭头键或滑动翻页</span>
+            <span className="sm:hidden">滑动翻页</span>
           </div>
         )}
 

@@ -1,0 +1,82 @@
+/* ========================================
+   响应式通用样式
+   负责设备检测和组件选择
+   ======================================== */
+
+/* 响应式容器 */
+.responsive-flipbook-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 响应式包装器 */
+.responsive-flipbook-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+/* 加载状态 */
+.responsive-flipbook-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.loading-spinner {
+  font-size: 1rem;
+  color: #6b7280;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+
+/* 确保移动端和桌面端样式隔离 */
+@media (max-width: 767px) {
+  /* 移动端：隐藏桌面端组件 */
+  .desktop-flipbook-container,
+  .desktop-book-portrait,
+  .desktop-nav-button,
+  .desktop-page-indicator,
+  .desktop-hints,
+  .desktop-flipbook,
+  .desktop-page,
+  .desktop-page-image {
+    display: none !important;
+  }
+  
+  /* 显示移动端组件 */
+  .mobile-flipbook-container {
+    display: flex !important;
+  }
+  
+  .mobile-book-portrait {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* 桌面端：隐藏移动端组件 */
+  .mobile-flipbook-container,
+  .mobile-book-portrait,
+  .mobile-nav-button,
+  .mobile-page-indicator,
+  .mobile-hints,
+  .mobile-flipbook,
+  .mobile-page,
+  .mobile-page-image {
+    display: none !important;
+  }
+  
+  /* 显示桌面端组件 */
+  .desktop-flipbook-container,
+  .desktop-book-portrait {
+    display: flex;
+  }
+}
