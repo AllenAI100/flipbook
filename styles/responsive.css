@@ -1,6 +1,5 @@
 /* ========================================
-   响应式通用样式
-   负责设备检测和组件选择
+   简化的响应式样式
    ======================================== */
 
 /* 响应式容器 */
@@ -36,7 +35,6 @@
   50% { opacity: 0.5; }
 }
 
-
 /* 确保移动端和桌面端样式隔离 */
 @media (max-width: 767px) {
   /* 移动端：隐藏桌面端组件 */
@@ -50,31 +48,10 @@
   .desktop-page-image {
     display: none !important;
   }
-  
-  /* 显示移动端组件 */
-  .mobile-flipbook-container {
-    display: flex !important;
-  }
-  
-  .mobile-book-portrait {
-    display: block !important;
-  }
 }
 
 @media (min-width: 768px) {
-  /* 桌面端：隐藏移动端组件 */
-  .mobile-flipbook-container,
-  .mobile-book-portrait,
-  .mobile-nav-button,
-  .mobile-page-indicator,
-  .mobile-hints,
-  .mobile-flipbook,
-  .mobile-page,
-  .mobile-page-image {
-    display: none !important;
-  }
-  
-  /* 显示桌面端组件 */
+  /* 桌面端：显示桌面端组件 */
   .desktop-flipbook-container,
   .desktop-book-portrait {
     display: flex;

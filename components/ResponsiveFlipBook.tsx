@@ -1,7 +1,8 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
-import MobileFlipBook from "./MobileFlipBook";
 import DesktopFlipBook from "./DesktopFlipBook";
+import SimpleMobileFlipBook from "./SimpleMobileFlipBook";
+import MobileTurnFlipBook from "./MobileTurnFlipBook";
 
 // 类型定义
 interface ImageItem {
@@ -26,41 +27,50 @@ interface ResponsiveFlipBookHandle {
 }
 
 /**
- * 响应式FlipBook组件
- * 根据设备类型自动选择移动端或桌面端组件
- * 实现完全解耦的架构
+ * 简化的响应式FlipBook组件
+ * 桌面端使用完整翻书，移动端使用简化版本
  */
 const ResponsiveFlipBook = React.forwardRef<ResponsiveFlipBookHandle, ResponsiveFlipBookProps>(
   function ResponsiveFlipBook({ images, onPage, rtl = false, className = "" }, ref) {
     const [isMobile, setIsMobile] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     
-    // 移动端和桌面端组件的引用
     const mobileRef = useRef<any>(null);
     const desktopRef = useRef<any>(null);
 
-    // 设备检测
+    // 精确的设备检测 - 区分手机、iPad和桌面端
     useEffect(() => {
       const checkDevice = () => {
+        if (typeof window === 'undefined') return;
+        
         const width = window.innerWidth;
+        const height = window.innerHeight;
         const userAgent = navigator.userAgent;
-        const isMobileDevice = width < 768 || 
-                              /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
         
-        console.log('ResponsiveFlipBook device check:', {
-          width,
-          userAgent,
-          isMobileDevice,
-          isMobile
-        });
+        // 检测iPad
+        const isIPad = /iPad/.test(userAgent) || 
+                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                     (width >= 768 && width <= 1366 && 'ontouchstart' in window);
         
-        setIsMobile(isMobileDevice);
+        // 检测手机（排除iPad）
+        const isMobilePhone = !isIPad && (
+          width < 768 || 
+          /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+        );
+        
+
+        
+        // 只有真正的手机才使用移动端组件
+        setIsMobile(isMobilePhone);
         setIsLoaded(true);
       };
 
       checkDevice();
       window.addEventListener('resize', checkDevice);
-      return () => window.removeEventListener('resize', checkDevice);
+      
+      return () => {
+        window.removeEventListener('resize', checkDevice);
+      };
     }, []);
 
     // 统一的方法接口
@@ -69,7 +79,6 @@ const ResponsiveFlipBook = React.forwardRef<ResponsiveFlipBookHandle, Responsive
 
       const currentRef = isMobile ? mobileRef : desktopRef;
       if (currentRef.current) {
-        // 将子组件的方法暴露给父组件
         (ref as any).current = {
           goTo: (index: number) => currentRef.current?.goTo(index),
           next: () => currentRef.current?.next(),
@@ -82,41 +91,31 @@ const ResponsiveFlipBook = React.forwardRef<ResponsiveFlipBookHandle, Responsive
     // 等待设备检测完成
     if (!isLoaded) {
       return (
-        <div className={`responsive-flipbook-loading ${className}`}>
-          <div className="loading-spinner">加载中...</div>
+        <div className="w-full h-screen flex items-center justify-center">
+          <div className="text-gray-600">加载中...</div>
         </div>
       );
     }
 
     // 根据设备类型渲染对应组件
-    console.log('ResponsiveFlipBook rendering:', { isMobile, isLoaded });
-    
     return (
-      <div className={`responsive-flipbook-wrapper ${className}`}>
+      <div className={`w-full h-full ${className}`}>
         {isMobile ? (
-          <div>
-            <div style={{color: 'red', fontSize: '12px', position: 'absolute', top: 0, left: 0, zIndex: 9999}}>
-              MOBILE MODE
-            </div>
-            <MobileFlipBook
-              ref={mobileRef}
-              images={images}
-              onPage={onPage}
-              rtl={rtl}
-            />
-          </div>
+          // 手机端使用TurnJS
+          <MobileTurnFlipBook
+            ref={mobileRef}
+            images={images}
+            onPage={onPage}
+            rtl={rtl}
+          />
         ) : (
-          <div>
-            <div style={{color: 'blue', fontSize: '12px', position: 'absolute', top: 0, left: 0, zIndex: 9999}}>
-              DESKTOP MODE
-            </div>
-            <DesktopFlipBook
-              ref={desktopRef}
-              images={images}
-              onPage={onPage}
-              rtl={rtl}
-            />
-          </div>
+          // iPad和桌面端使用现有组件
+          <DesktopFlipBook
+            ref={desktopRef}
+            images={images}
+            onPage={onPage}
+            rtl={rtl}
+          />
         )}
       </div>
     );
