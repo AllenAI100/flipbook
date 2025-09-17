@@ -39,7 +39,7 @@ export default function Home() {
       <div className="bg-gray-50 rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-6 text-center">🚀 示例和测试页面</h2>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {/* 主要示例 */}
           <Link href="/books/demo" className="block bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-4 transition-colors">
             <h3 className="font-semibold mb-2">📖 主要示例</h3>
@@ -66,6 +66,13 @@ export default function Home() {
             <h3 className="font-semibold mb-2">🔍 设备检测</h3>
             <p className="text-sm opacity-90">iPad和移动设备检测测试</p>
             <p className="text-xs mt-2 opacity-75">/test-device</p>
+          </Link>
+
+          {/* 增强版自适应测试 */}
+          <Link href="/test-enhanced" className="block bg-gradient-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white rounded-lg p-4 transition-all shadow-lg">
+            <h3 className="font-semibold mb-2">✨ 增强版自适应 <span className="text-xs bg-white/20 px-2 py-1 rounded-full ml-1">NEW!</span></h3>
+            <p className="text-sm opacity-90">精确设备检测和多级自适应优化</p>
+            <p className="text-xs mt-2 opacity-75">/test-enhanced</p>
           </Link>
         </div>
       </div>

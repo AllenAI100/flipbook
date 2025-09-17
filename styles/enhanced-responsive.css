@@ -1,0 +1,329 @@
+/* ========================================
+   增强版响应式翻书样式
+   支持各种设备的自适应优化
+======================================== */
+
+/* 全局样式重置 */
+* {
+  box-sizing: border-box;
+}
+
+/* 动画定义 */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* 手机端样式 (< 768px) */
+@media (max-width: 767px) {
+  .enhanced-mobile-container {
+    padding: 10px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+  
+  .enhanced-mobile-flipbook {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .enhanced-mobile-nav-button {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .enhanced-mobile-nav-button:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+}
+
+/* 小平板样式 (768px - 900px) */
+@media (min-width: 768px) and (max-width: 900px) {
+  .enhanced-tablet-small-container {
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .enhanced-tablet-small-flipbook {
+    border-radius: 10px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  .enhanced-tablet-small-nav-button {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
+
+/* 大平板样式 (901px - 1200px) */
+@media (min-width: 901px) and (max-width: 1200px) {
+  .enhanced-tablet-large-container {
+    padding: 30px;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+  
+  .enhanced-tablet-large-flipbook {
+    border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  }
+  
+  .enhanced-tablet-large-nav-button {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
+}
+
+/* 小桌面样式 (1201px - 1600px) */
+@media (min-width: 1201px) and (max-width: 1600px) {
+  .enhanced-desktop-small-container {
+    padding: 40px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+  
+  .enhanced-desktop-small-flipbook {
+    border-radius: 6px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08);
+  }
+  
+  .enhanced-desktop-small-nav-button {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+}
+
+/* 大桌面样式 (> 1600px) */
+@media (min-width: 1601px) {
+  .enhanced-desktop-large-container {
+    padding: 50px;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  }
+  
+  .enhanced-desktop-large-flipbook {
+    border-radius: 4px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.06);
+  }
+  
+  .enhanced-desktop-large-nav-button {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
+}
+
+/* 横屏适配 */
+@media (orientation: landscape) {
+  .enhanced-landscape-container {
+    flex-direction: row;
+    padding: 20px 40px;
+  }
+  
+  .enhanced-landscape-flipbook {
+    max-height: calc(100vh - 40px);
+  }
+  
+  .enhanced-landscape-nav-button {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .enhanced-landscape-page-indicator {
+    bottom: 15px;
+  }
+}
+
+/* 竖屏适配 */
+@media (orientation: portrait) {
+  .enhanced-portrait-container {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  
+  .enhanced-portrait-flipbook {
+    max-width: calc(100vw - 40px);
+  }
+  
+  .enhanced-portrait-nav-button {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .enhanced-portrait-page-indicator {
+    bottom: 30px;
+  }
+}
+
+/* 高DPI屏幕适配 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .enhanced-hidpi-flipbook {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  .enhanced-hidpi-nav-button {
+    border-width: 1px;
+  }
+  
+  .enhanced-hidpi-page-indicator {
+    font-weight: 400;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .enhanced-touch-nav-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+  
+  .enhanced-touch-nav-button:active {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(0.95);
+  }
+  
+  .enhanced-touch-page-indicator {
+    font-size: 16px;
+    padding: 10px 16px;
+  }
+}
+
+/* 鼠标设备优化 */
+@media (hover: hover) and (pointer: fine) {
+  .enhanced-mouse-nav-button:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .enhanced-mouse-flipbook:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s ease;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .enhanced-dark-container {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  }
+  
+  .enhanced-dark-nav-button {
+    background: rgba(45, 55, 72, 0.9);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+  }
+  
+  .enhanced-dark-page-indicator {
+    background: rgba(45, 55, 72, 0.9);
+    color: #e2e8f0;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .enhanced-print-container {
+    background: white !important;
+    box-shadow: none !important;
+  }
+  
+  .enhanced-print-nav-button,
+  .enhanced-print-page-indicator {
+    display: none !important;
+  }
+  
+  .enhanced-print-flipbook {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* 可访问性增强 */
+@media (prefers-contrast: high) {
+  .enhanced-high-contrast-nav-button {
+    border: 3px solid #000;
+    background: #fff;
+    color: #000;
+  }
+  
+  .enhanced-high-contrast-page-indicator {
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+  }
+}
+
+/* 通用工具类 */
+.enhanced-hidden {
+  display: none !important;
+}
+
+.enhanced-visible {
+  display: block !important;
+}
+
+.enhanced-fade-in {
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.enhanced-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.enhanced-pulse {
+  animation: pulse 2s infinite;
+}
+
+.enhanced-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.enhanced-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.enhanced-shadow-md {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.enhanced-shadow-lg {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.enhanced-rounded-sm {
+  border-radius: 4px;
+}
+
+.enhanced-rounded-md {
+  border-radius: 8px;
+}
+
+.enhanced-rounded-lg {
+  border-radius: 12px;
+}
