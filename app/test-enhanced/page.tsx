@@ -21,7 +21,7 @@ const images = [
  */
 export default function TestEnhancedPage() {
   const handlePageChange = (index: number) => {
-    console.log(`当前页面: ${index + 1}`);
+    // console.log(`当前页面: ${index + 1}`);
   };
 
   return (

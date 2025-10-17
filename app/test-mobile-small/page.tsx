@@ -34,7 +34,7 @@ export default function TestMobileSmallPage() {
           <div className="mobile-optimized lg:desktop-optimized">
             <ResponsiveFlipBook
               images={testImages}
-              onPage={(index) => console.log('Page changed to:', index + 1)}
+              onPage={(index) => { /* console.log('Page changed to:', index + 1) */ }}
             />
           </div>
         </div>

@@ -30,7 +30,7 @@ interface DesktopFlipBookHandle {
  */
 const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
   function DesktopFlipBook({ images, onPage, rtl = false }, ref) {
-    console.log('DesktopFlipBook component initialized with:', { images: images.length, rtl });
+    // console.log('DesktopFlipBook component initialized with:', { images: images.length, rtl });
     
     const bookRef = useRef<any>(null);
     const [page, setPage] = useState(0);
@@ -47,7 +47,7 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
         setPage(currentPage);
         
         const onFlip = (e: any) => {
-          console.log('DesktopFlipBook onFlip:', e.data || e, 'rtl:', rtl, 'total:', total);
+          // console.log('DesktopFlipBook onFlip:', e.data || e, 'rtl:', rtl, 'total:', total);
           setPage(e.data || e);
           const logicalIndex = rtl ? total - 1 - (e.data || e) : (e.data || e);
           onPage?.(logicalIndex);
@@ -64,7 +64,7 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
           const currentPage = api.getCurrentPageIndex();
           setPage(prevPage => {
             if (currentPage !== prevPage) {
-              console.log('DesktopFlipBook interval check: page changed from', prevPage, 'to', currentPage);
+              // console.log('DesktopFlipBook interval check: page changed from', prevPage, 'to', currentPage);
               return currentPage;
             }
             return prevPage;
@@ -94,13 +94,13 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
 
     // 桌面端专用翻页函数
     const goPrev = () => {
-      console.log('DesktopFlipBook goPrev called, current page before:', page);
+      // console.log('DesktopFlipBook goPrev called, current page before:', page);
       const api = bookRef.current?.pageFlip?.();
       if (api) {
         api.flipPrev();
         setTimeout(() => {
           const newPage = api.getCurrentPageIndex();
-          console.log('DesktopFlipBook goPrev: page changed to:', newPage);
+          // console.log('DesktopFlipBook goPrev: page changed to:', newPage);
           setPage(newPage);
         }, 50);
       }
@@ -108,13 +108,13 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
     };
 
     const goNext = () => {
-      console.log('DesktopFlipBook goNext called, current page before:', page);
+      // console.log('DesktopFlipBook goNext called, current page before:', page);
       const api = bookRef.current?.pageFlip?.();
       if (api) {
         api.flipNext();
         setTimeout(() => {
           const newPage = api.getCurrentPageIndex();
-          console.log('DesktopFlipBook goNext: page changed to:', newPage);
+          // console.log('DesktopFlipBook goNext: page changed to:', newPage);
           setPage(newPage);
         }, 50);
       }
@@ -203,7 +203,7 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
           {/* 桌面端专用UI元素 */}
           <button
             onClick={() => {
-              console.log('DesktopFlipBook goPrev clicked, current page:', page, 'rtl:', rtl, 'total:', total);
+              // console.log('DesktopFlipBook goPrev clicked, current page:', page, 'rtl:', rtl, 'total:', total);
               goPrev();
             }}
             disabled={rtl ? page === total - 1 : page === 0}
@@ -214,7 +214,7 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
 
           <button
             onClick={() => {
-              console.log('DesktopFlipBook goNext clicked, current page:', page, 'rtl:', rtl, 'total:', total);
+              // console.log('DesktopFlipBook goNext clicked, current page:', page, 'rtl:', rtl, 'total:', total);
               goNext();
             }}
             disabled={rtl ? page === 0 : page === total - 1}
@@ -224,7 +224,7 @@ const DesktopFlipBook = forwardRef<DesktopFlipBookHandle, DesktopFlipBookProps>(
           </button>
 
           <div className="desktop-page-indicator">
-            {page + 1} / {total} (debug: page={page}, rtl={rtl ? 'true' : 'false'})
+            {page + 1} / {total}
           </div>
 
           {showHints && (

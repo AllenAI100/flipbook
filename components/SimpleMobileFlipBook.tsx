@@ -164,7 +164,7 @@ const SimpleMobileFlipBook = forwardRef<SimpleMobileFlipBookHandle, SimpleMobile
                 opacity: isAnimating ? 0.7 : 1
               }}
               onLoad={() => {
-                console.log(`页面 ${currentPage + 1} 图片加载完成`);
+                // console.log(`页面 ${currentPage + 1} 图片加载完成`);
               }}
               onError={(e) => {
                 console.error(`页面 ${currentPage + 1} 图片加载失败`, e);

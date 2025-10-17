@@ -172,7 +172,7 @@ const FlipBook = forwardRef<FlipBookHandle, FlipBookProps>(function FlipBook({
           height={990}
           size="fixed" // 固定尺寸模式，更利于锁定单页
           usePortrait={true} // 强制单页模式
-          onChangeOrientation={(mode) => console.log('FlipBook orientation:', mode)}
+          onChangeOrientation={(mode) => { /* console.log('FlipBook orientation:', mode) */ }}
           minWidth={280}
           maxWidth={1800}
           minHeight={300}

@@ -27,7 +27,7 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({
   const [loadingStatus, setLoadingStatus] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
-    console.log('🖼️ 开始预加载图片，总数:', images.length);
+    // console.log('🖼️ 开始预加载图片，总数:', images.length);
     
     if (images.length === 0) {
       onAllLoaded();
@@ -41,7 +41,7 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({
 
     const checkAllLoaded = () => {
       if (loaded === total) {
-        console.log('✅ 所有图片预加载完成');
+        // console.log('✅ 所有图片预加载完成');
         onAllLoaded();
       }
     };
@@ -57,7 +57,7 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({
         setLoadingStatus(prev => ({ ...prev, [img.src]: true }));
         onProgress(loaded, total);
         
-        console.log(`✅ 图片 ${index + 1}/${total} 加载完成:`, img.src);
+        // console.log(`✅ 图片 ${index + 1}/${total} 加载完成:`, img.src);
         checkAllLoaded();
       };
 
@@ -78,7 +78,7 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({
 
     return () => {
       // 清理函数 - 取消所有图片加载
-      console.log('🧹 清理图片预加载器');
+      // console.log('🧹 清理图片预加载器');
       imageRefs.forEach(img => {
         img.onload = null;
         img.onerror = null;

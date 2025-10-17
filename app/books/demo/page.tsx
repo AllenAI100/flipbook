@@ -14,7 +14,7 @@ export default function DemoPage() {
     <ResponsiveContainer>
       <ResponsiveFlipBook 
         images={pages}
-        onPage={(index) => console.log('Page changed to:', index)}
+        onPage={(index) => { /* console.log('Page changed to:', index) */ }}
       />
     </ResponsiveContainer>
   );
