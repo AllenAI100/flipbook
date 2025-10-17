@@ -1,6 +1,3 @@
-
-
-````markdown
 # Flipbook
 
 一个基于 React 的电子翻书效果项目，支持 **单页模式** 和 **翻页动画**，可自适应屏幕（电脑 / 平板）。
@@ -59,3 +56,50 @@ flipbook/
 
 MIT License
 
+---
+
+## 生产部署：Docker + Nginx (80/443)
+
+项目已包含用于生产的编排与反向代理配置：
+- Dockerfile：Next.js standalone 构建（node server.js）
+- docker-compose.prod.yml：app + nginx（监听 80/443）
+- nginx/nginx.conf：HTTPS、反代、缓存、gzip（含证书占位）
+- 证书路径：nginx/certs/fullchain.pem 与 nginx/certs/privkey.pem
+
+使用步骤（服务器上）：
+1) 准备证书
+- 将你的域名证书复制到：
+  - nginx/certs/fullchain.pem
+  - nginx/certs/privkey.pem
+- 将 nginx/nginx.conf 中的 server_name 改为你的域名（如 yourdomain.com www.yourdomain.com）
+
+2) 启动（自动构建并由 Nginx 反代到 80/443）
+```bash
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+3) 访问
+- HTTP 将 301 跳转到 HTTPS：
+  - http://你的域名 → https://你的域名
+
+常用命令
+```bash
+# 查看服务与日志
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f nginx
+docker compose -f docker-compose.prod.yml logs -f app
+
+# 修改了 nginx.conf 后平滑重载
+docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
+
+# 重建/重启
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml restart
+```
+
+注意事项
+- 首次无证书可暂时注释 nginx.conf 中的 HTTPS server 段，仅开放 80 测试。
+- 静态资源缓存策略：
+  - /_next/static: Cache-Control 30 天 immutable
+  - /books: Cache-Control 7 天（若频繁更新，建议缩短或改名避免缓存命中）
+- 若宿主机启用 SELinux，挂载卷可能需要 :Z（本配置仅读挂载一般可用）。
