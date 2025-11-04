@@ -1,6 +1,6 @@
 {
   "path": "/Users/allenlai/Downloads/my-flipbook-site",
-  "desc": "这是一个基于 Next.js 的电子翻书效果项目，支持单页模式和翻页动画，可自适应屏幕。新版本包含：优化的书脊视觉效果、智能动效提示系统、完善的键盘控制功能，提供更好的用户体验。",
+  "desc": "Next.js 翻页站点，包含移动端/桌面端自适配的翻书组件与示例页面",
   "id": "84429c4c067f4fa791dba42e680b3a32",
   "data": {
     "spaceKey": "84429c4c067f4fa791dba42e680b3a32",

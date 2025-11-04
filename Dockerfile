@@ -3,19 +3,29 @@ FROM node:20-alpine AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
-# Install deps (use cached layers)
-COPY package.json pnpm-lock.yaml* package-lock.json* yarn.lock* ./
-# Prefer pnpm if available, else npm
-RUN if [ -f pnpm-lock.yaml ]; then       corepack enable && corepack prepare pnpm@latest --activate && pnpm i --frozen-lockfile;     elif [ -f yarn.lock ]; then       corepack enable && yarn install --frozen-lockfile;     else       npm ci;     fi
+# Install dependencies
+COPY package.json package-lock.json* ./
 
-# Copy the rest and build
+# Install all dependencies (including devDependencies for build)
+RUN npm ci || npm install
+
+# Verify next is installed
+RUN ls -la node_modules/.bin/next && \
+    node_modules/.bin/next --version || \
+    (echo "next not found, reinstalling..." && npm install next)
+
+# Copy source code
 COPY . .
-RUN if [ -f pnpm-lock.yaml ]; then       pnpm build;     elif [ -f yarn.lock ]; then       yarn build;     else       npm run build;     fi
+
+# Build the application
+# Use direct path to next binary or npx to avoid PATH issues
+RUN ./node_modules/.bin/next build || npx next build
 
 # ===== RUNTIME STAGE =====
 FROM node:20-alpine AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
 WORKDIR /app
 
 # Create non-root user
