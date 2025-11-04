@@ -40,12 +40,12 @@ export default function Home() {
         <h2 className="text-2xl font-semibold mb-6 text-center">🚀 示例和测试页面</h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {/* Future 书籍 */}
-          <Link href={"/future" as any} className="block bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg p-4 transition-colors">
-            <h3 className="font-semibold mb-2">📘 Future</h3>
-            <p className="text-sm opacity-90">未来之书</p>
-            <p className="text-xs mt-2 opacity-75">/future</p>
-            <p className="text-xs mt-1 opacity-60">future.abc.com</p>
+          {/* Finder 书籍 */}
+          <Link href={"/finder" as any} className="block bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg p-4 transition-colors">
+            <h3 className="font-semibold mb-2">📘 Finder</h3>
+            <p className="text-sm opacity-90">发现者之书</p>
+            <p className="text-xs mt-2 opacity-75">/finder</p>
+            <p className="text-xs mt-1 opacity-60">finder.abc.com</p>
           </Link>
 
           {/* YouthMBA 书籍 */}

@@ -7,7 +7,7 @@ function range(n: number) { return Array.from({ length: n }, (_, i) => i); }
 export default function DemoPage() {
   const pages = range(6).map((i) => {
     const num = String(i + 1).padStart(3, "0");
-    return { src: `/books/future/${num}.png`, alt: `第 ${i + 1} 页` };
+    return { src: `/books/finder/${num}.png`, alt: `第 ${i + 1} 页` };
   });
 
   return (

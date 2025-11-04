@@ -1,6 +1,6 @@
 # Vercel 二级域名配置指南
 
-本指南将帮助你配置 Vercel 部署，使不同的二级域名（如 `future.abc.com` 和 `youthmba.abc.com`）访问不同的书籍页面。
+本指南将帮助你配置 Vercel 部署，使不同的二级域名（如 `finder.abc.com` 和 `youthmba.abc.com`）访问不同的书籍页面。
 
 ---
 
@@ -33,7 +33,7 @@ TTL: 3600 (或自动)
 
 ```
 类型: CNAME
-名称: future
+名称: finder
 值: cname.vercel-dns.com
 TTL: 3600
 
@@ -61,9 +61,9 @@ TTL: 3600
 
 在同一个 **Domains** 页面，添加以下子域名：
 
-1. **future.abc.com**
+1. **finder.abc.com**
    - 点击 **Add Domain**
-   - 输入 `future.abc.com`
+   - 输入 `finder.abc.com`
    - 选择 **Add**
 
 2. **youthmba.abc.com**
@@ -86,15 +86,15 @@ Vercel 会自动验证域名配置。等待 DNS 传播（通常 5-30 分钟）�
 1. 检测请求的 `Host` 头（子域名）
 2. 如果是根路径（`/`）且匹配到子域名映射，自动重定向到对应的书籍页面
 3. 子域名映射：
-   - `future.abc.com` → `/future`
+   - `finder.abc.com` → `/finder`
    - `youthmba.abc.com` → `/youthmba`
 
 ### 3.2 当前路由结构
 
 ```
 app/
-├── future/
-│   └── page.tsx      # future 书籍页面
+├── finder/
+│   └── page.tsx      # finder 书籍页面
 ├── youthmba/
 │   └── page.tsx      # youthmba 书籍页面
 └── page.tsx          # 主页面（显示所有书籍链接）
@@ -108,14 +108,14 @@ app/
    ```bash
    # 例如添加 newbook 书籍
    mkdir -p app/newbook
-   # 复制 app/future/page.tsx 并修改图片路径
+   # 复制 app/finder/page.tsx 并修改图片路径
    ```
 
 2. **更新中间件：**
    编辑 `middleware.ts`，添加映射：
    ```typescript
    const subdomainMap: Record<string, string> = {
-     'future': '/future',
+     'finder': '/finder',
      'youthmba': '/youthmba',
      'newbook': '/newbook',  // 新增
    };
@@ -140,12 +140,12 @@ app/
 sudo nano /etc/hosts
 
 # 添加以下行
-127.0.0.1 future.localhost
+127.0.0.1 finder.localhost
 127.0.0.1 youthmba.localhost
 ```
 
 然后访问：
-- `http://future.localhost:3000`
+- `http://finder.localhost:3000`
 - `http://youthmba.localhost:3000`
 
 **方法 2：使用环境变量模拟**
@@ -164,13 +164,13 @@ if (process.env.NODE_ENV === 'development' && url.searchParams.get('subdomain'))
 }
 ```
 
-然后访问：`http://localhost:3000/?subdomain=future`
+然后访问：`http://localhost:3000/?subdomain=finder`
 
 ### 4.2 生产环境测试
 
 部署到 Vercel 后，访问：
 
-- `https://future.abc.com` → 应该显示 future 书籍
+- `https://finder.abc.com` → 应该显示 finder 书籍
 - `https://youthmba.abc.com` → 应该显示 youthmba 书籍
 - `https://abc.com` → 显示主页面（所有书籍链接）
 
@@ -236,10 +236,10 @@ if (!subdomainMap[subdomain] && subdomain !== 'www' && !hostname.includes('verce
 在页面组件中根据子域名设置不同的 SEO 元数据：
 
 ```typescript
-// app/future/page.tsx
+// app/finder/page.tsx
 export const metadata = {
-  title: 'Future Book - 未来之书',
-  description: '探索未来的精彩内容',
+  title: 'Finder Book - 发现者之书',
+  description: '探索发现的精彩内容',
 };
 ```
 
@@ -250,7 +250,7 @@ export const metadata = {
 ```typescript
 // 使用环境变量或配置
 const analyticsMap = {
-  'future': 'GA_TRACKING_ID_FUTURE',
+  'finder': 'GA_TRACKING_ID_FINDER',
   'youthmba': 'GA_TRACKING_ID_YOUTHMBA',
 };
 ```
@@ -261,7 +261,7 @@ const analyticsMap = {
 
 - [ ] DNS CNAME 记录已配置（或使用通配符）
 - [ ] Vercel 中已添加主域名 `abc.com`
-- [ ] Vercel 中已添加所有子域名（`future.abc.com`, `youthmba.abc.com`）
+- [ ] Vercel 中已添加所有子域名（`finder.abc.com`, `youthmba.abc.com`）
 - [ ] DNS 记录验证通过（Vercel 显示 Valid）
 - [ ] 中间件映射已配置
 - [ ] 所有书籍页面已创建
@@ -303,7 +303,7 @@ npm i -g vercel
 vercel login
 
 # 添加域名
-vercel domains add future.abc.com
+vercel domains add finder.abc.com
 vercel domains add youthmba.abc.com
 ```
 
@@ -313,7 +313,7 @@ vercel domains add youthmba.abc.com
 
 配置完成后，你的用户可以通过以下方式访问：
 
-- **Future 书籍**: `https://future.abc.com`
+- **Finder 书籍**: `https://finder.abc.com`
 - **YouthMBA 书籍**: `https://youthmba.abc.com`
 - **主页（所有书籍）**: `https://abc.com`
 

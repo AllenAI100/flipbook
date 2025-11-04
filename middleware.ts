@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // 子域名到书籍路径的映射
 const subdomainMap: Record<string, string> = {
-  'future': '/future',
+  'finder': '/finder',
   'youthmba': '/youthmba',
 };
 
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 提取子域名（例如：future.abc.com -> future）
+  // 提取子域名（例如：finder.abc.com -> finder）
   const subdomain = hostname.split('.')[0];
 
   // 如果是根路径且匹配到子域名映射，重定向到对应的书籍页面
