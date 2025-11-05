@@ -1,6 +1,6 @@
 export const metadata = { 
-  title: "FlipBook Demo", 
-  description: "Next.js + react-pageflip" 
+  title: "About Us", 
+  description: "history of our company" 
 };
 
 // 移动端 viewport 配置 - iPhone 15 等现代手机优化
